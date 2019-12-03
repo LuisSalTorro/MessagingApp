@@ -18,6 +18,7 @@ public class messagingBoard extends AppCompatActivity {
     Button send;
     EditText message;
     TextView textField;
+    String name;
     private DatabaseReference myDatabase;
 //    private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder>
 //            mFirebaseAdapter;
@@ -25,7 +26,7 @@ public class messagingBoard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_board);
-
+        name = getIntent().getStringExtra("Name");
         setupGUI();
         sendMessages();
     }
@@ -34,7 +35,7 @@ public class messagingBoard extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myDatabase.child("Name").setValue(message.getText().toString());
+                myDatabase.child("").setValue(encrypt(name + message.getText().toString()));
                 message.setText("");
             }
         });
@@ -53,7 +54,7 @@ public class messagingBoard extends AppCompatActivity {
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                textField.setText(dataSnapshot.getValue().toString());
+                textField.setText(encrypt(dataSnapshot.getValue().toString()));
             }
 
             @Override
@@ -62,4 +63,41 @@ public class messagingBoard extends AppCompatActivity {
             }
         });
     }
+
+    public String reverseString(String str){
+        StringBuilder strBuilder = new StringBuilder();
+        char[] strChars = str.toCharArray();
+
+        for (int i = strChars.length - 1; i >= 0; i--) {
+            strBuilder.append(strChars[i]);
+        }
+
+        return strBuilder.toString();
+    }
+
+    public String alphabetAndCharacters(){
+        String special = "@#%^&=_";
+        String alphabet = "abcdefghijklmnopqrstuvwxyz"  + special;
+
+        return alphabet;
+    }
+
+    public String encrypt(String word){
+        char[] alpha = alphabetAndCharacters().toCharArray();
+        char[] revAlpha = reverseString(alphabetAndCharacters()).toCharArray();
+
+        char[] splitWord = word.toCharArray();
+        for(int i = 0; i < splitWord.length; i++){
+            for(int j = 0; j < revAlpha.length; j++){
+                if(splitWord[i] == alpha[j]){
+                    splitWord[i] = revAlpha[j];
+                    break;
+                }
+            }
+        }
+        String encrypredWord = new String(splitWord);
+        return encrypredWord;
+    }
+
+
 }
