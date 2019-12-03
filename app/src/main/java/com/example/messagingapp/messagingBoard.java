@@ -18,7 +18,7 @@ public class messagingBoard extends AppCompatActivity {
     Button send;
     EditText message;
     TextView textField;
-    String name;
+    StringBuilder currentText;
     private DatabaseReference myDatabase;
 //    private FirebaseRecyclerAdapter<FriendlyMessage, MessageViewHolder>
 //            mFirebaseAdapter;
@@ -26,7 +26,8 @@ public class messagingBoard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_board);
-        name = getIntent().getStringExtra("Name");
+
+        currentText = new StringBuilder();
         setupGUI();
         sendMessages();
     }
@@ -35,7 +36,7 @@ public class messagingBoard extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myDatabase.child("").setValue(encrypt(name + message.getText().toString()));
+                myDatabase.child("").setValue(encrypt(message.getText().toString()));
                 message.setText("");
             }
         });
@@ -48,13 +49,16 @@ public class messagingBoard extends AppCompatActivity {
         textField = findViewById(R.id.textField);
         databaseSetup();
     }
+
+    //read database
     public void databaseSetup(){
         myDatabase = FirebaseDatabase.getInstance().getReference("Message");
 
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                textField.setText(encrypt(dataSnapshot.getValue().toString()));
+                currentText.append(encrypt(dataSnapshot.getValue().toString()) + "\n\n");
+                textField.setText(currentText);
             }
 
             @Override
