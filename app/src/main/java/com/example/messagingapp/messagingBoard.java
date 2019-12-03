@@ -76,8 +76,8 @@ public class messagingBoard extends AppCompatActivity {
     }
 
     public String alphabetAndCharacters(){
-        String special = "@#%^&=_";
-        String alphabet = "abcdefghijklmnopqrstuvwxyz"  + special;
+        String special = "@#%^&=_/*-+";
+        String alphabet = "abcdefghijkABCDEFGHIJKlmnopqrstuvw xyz" + "LMNOPQRSTUVWXYZ" + special + "0123456789";
 
         return alphabet;
     }
